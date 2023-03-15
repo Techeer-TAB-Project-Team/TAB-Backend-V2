@@ -29,6 +29,12 @@ jobs:
           touch ./application-docker.yml
           echo "${{ secrets.DATABASE_FOR_DOCKER }}" >> ./application-docker.yml
 
+      - name: create application-s3.yml
+        run: |
+          cd ./src/main/resources
+          touch ./application-s3.yml
+          echo "${{ secrets.S3_CONFIG }}" >> ./application-s3.yml
+
       - name: create .env
         run: |
           touch ./.env
@@ -96,5 +102,5 @@ jobs:
           key: ${{ secrets.SERVER_KEY }}
           envs: GITHUB_SHA
           script: |
-            chmod +x ./deploy.sh
-            ./deploy.sh
+#            chmod +x ./deploy.sh
+#            ./deploy.sh
