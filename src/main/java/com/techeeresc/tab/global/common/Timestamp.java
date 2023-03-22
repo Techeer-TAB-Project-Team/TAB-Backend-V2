@@ -16,5 +16,6 @@ public class Timestamp {
   private LocalDateTime createdAt;
 
   @LastModifiedDate // 조회한 Entity의 값을 변경할 때 시간이 자동 저장
+  // 수정 시 수정된 날짜로 저장되기 때문에 따로 처리해줄 필요는 없다.
   private LocalDateTime updatedAt;
 }
