@@ -21,6 +21,8 @@ public class BookmarkMapper {
         .id(bookmark.getId())
         .memberId(bookmark.getMemberId())
         .postId(bookmark.getPostId())
+        .createdAt(bookmark.getCreatedAt())
+        .updatedAt(bookmark.getUpdatedAt())
         .build();
   }
 }

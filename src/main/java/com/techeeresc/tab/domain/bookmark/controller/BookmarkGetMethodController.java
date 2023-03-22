@@ -22,6 +22,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 @ApiResponses({
   @ApiResponse(
       responseCode = "200",
@@ -75,9 +77,9 @@ public class BookmarkGetMethodController {
             content = @Content(schema = @Schema(implementation = BookmarkResponseDto.class))),
       })
   @GetMapping
-  public ResponseEntity<PageImpl<Bookmark>> findAllBookmark(BookmarkPagingDto bookmarkPagingDTO) {
+  public ResponseEntity<List<Bookmark>> findAllBookmark(BookmarkPagingDto bookmarkPagingDTO) {
     Pageable pageable = bookmarkPagingDTO.of();
-    PageImpl<Bookmark> bookmarks = BOOKMARK_SERVICE.findAllBookmark(pageable);
+    List<Bookmark> bookmarks = BOOKMARK_SERVICE.findAllBookmark(pageable);
     return new ResponseEntity<>(bookmarks, HttpStatus.OK);
   }
 }

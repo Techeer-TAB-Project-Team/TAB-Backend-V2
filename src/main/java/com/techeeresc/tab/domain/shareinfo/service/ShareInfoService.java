@@ -17,5 +17,5 @@ public interface ShareInfoService {
 
   public ShareInfo findShareInfoById(Long id);
 
-  public PageImpl<ShareInfo> findAllShareInfoList(Pageable pageable);
+  public List<ShareInfo> findAllShareInfoList(Pageable pageable);
 }

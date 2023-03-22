@@ -27,6 +27,8 @@ public class ShareInfoMapper {
         .link(shareInfo.getLink())
         .image(shareInfo.getImage())
         .hashtag(shareInfo.getHashtag())
+        .createdAt(shareInfo.getCreatedAt())
+        .updatedAt(shareInfo.getUpdatedAt())
         .build();
   }
 }
