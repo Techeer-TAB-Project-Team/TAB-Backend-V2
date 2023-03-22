@@ -39,15 +39,16 @@ public class PostServiceImpl implements PostService, PostQueryDslRepository {
 
   @Transactional
   @Override
-  public Post insertPost(PostCreateRequestDto postCreateRequestDto, List<MultipartFile> files) {
-    String imageUrls = getImageLink(files);
-    return POST_REPOSITORY.save(POST_MAPPER.saveDataToEntity(postCreateRequestDto, imageUrls));
+  public Post insertPost(PostCreateRequestDto postCreateRequestDto, List<MultipartFile> files, List<MultipartFile> images) {
+    String fileUrls = getImageAndFileLink(files);
+    String imageUrls = getImageAndFileLink(images);
+    return POST_REPOSITORY.save(POST_MAPPER.saveDataToEntity(postCreateRequestDto, fileUrls, imageUrls));
   }
 
-  private String getImageLink(List<MultipartFile> files) {
-    StringBuffer imageUrls = new StringBuffer();
+  private String getImageAndFileLink(List<MultipartFile> filesOrImages) {
+    StringBuffer fileOrImageUrls = new StringBuffer();
 
-    files.forEach(
+    filesOrImages.forEach(
         file -> {
           String fileName = createFileName(file.getOriginalFilename());
           ObjectMetadata objectMetadata = new ObjectMetadata();
@@ -62,10 +63,10 @@ public class PostServiceImpl implements PostService, PostQueryDslRepository {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "파일 업로드에 실패했습니다.");
           }
 
-          imageUrls.append(urlPrefix + fileName + ", ");
+          fileOrImageUrls.append(urlPrefix + fileName + ", ");
         });
 
-    return imageUrls.toString();
+    return fileOrImageUrls.toString();
   }
 
   @Transactional
