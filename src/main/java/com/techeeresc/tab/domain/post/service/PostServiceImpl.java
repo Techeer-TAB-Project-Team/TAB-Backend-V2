@@ -8,6 +8,7 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.techeeresc.tab.domain.post.dto.mapper.PostMapper;
 import com.techeeresc.tab.domain.post.dto.request.PostCreateRequestDto;
 import com.techeeresc.tab.domain.post.dto.request.PostUpdateRequestDto;
+import com.techeeresc.tab.domain.post.dto.response.PostDataAndLengthDto;
 import com.techeeresc.tab.domain.post.entity.Post;
 import com.techeeresc.tab.domain.post.entity.QPost;
 import com.techeeresc.tab.domain.post.repository.PostQueryDslRepository;
@@ -120,7 +121,7 @@ public class PostServiceImpl implements PostService, PostQueryDslRepository {
 
   @Transactional
   @Override
-  public List<Post> findByTitleContainsWordWithQueryDsl(String word, Pageable pageable) {
+  public PostDataAndLengthDto findByTitleContainsWordWithQueryDsl(String word, Pageable pageable) {
     QPost qPost = QPost.post;
 
     try {
@@ -134,7 +135,10 @@ public class PostServiceImpl implements PostService, PostQueryDslRepository {
 
       isPostExistedByList(postSearchResults);
 
-      return postSearchResults;
+      return PostDataAndLengthDto.builder()
+              .posts(postSearchResults)
+              .postLength(getSearchDataSize(word))
+              .build();
     } catch (NullPointerException exception) {
       throw new RequestNotFoundException(
           StatusMessage.NOT_FOUND.getStatusMessage(), StatusCodes.NOT_FOUND);
@@ -143,7 +147,7 @@ public class PostServiceImpl implements PostService, PostQueryDslRepository {
 
   @Transactional
   @Override
-  public List<Post> findAllPostListWithQueryDsl(Pageable pageable) {
+  public PostDataAndLengthDto findAllPostListWithQueryDsl(Pageable pageable) {
     QPost qPost = QPost.post;
 
     try {
@@ -155,7 +159,11 @@ public class PostServiceImpl implements PostService, PostQueryDslRepository {
               .fetch();
 
       isPostExistedByList(posts);
-      return posts;
+
+      return PostDataAndLengthDto.builder()
+              .posts(posts)
+              .postLength(getAllDataSize())
+              .build();
     } catch (NullPointerException exception) {
       throw new RequestNotFoundException(
           StatusMessage.NOT_FOUND.getStatusMessage(), StatusCodes.NOT_FOUND);
@@ -188,5 +196,21 @@ public class PostServiceImpl implements PostService, PostQueryDslRepository {
     } catch (StringIndexOutOfBoundsException e) {
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "잘못된 형식의 파일: " + fileName);
     }
+  }
+
+  private int getAllDataSize() {
+    return POST_REPOSITORY.findAll().size();
+  }
+
+  private int getSearchDataSize(String word) {
+    QPost qPost = QPost.post;
+
+    List<Post> postAllSearchResultsLength =
+        JPA_QUERY_FACTORY
+          .selectFrom(qPost)
+          .where(qPost.title.contains(word))
+          .fetch();
+
+    return postAllSearchResultsLength.size();
   }
 }
