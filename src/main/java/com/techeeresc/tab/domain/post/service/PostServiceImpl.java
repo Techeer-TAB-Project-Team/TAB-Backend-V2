@@ -40,7 +40,22 @@ public class PostServiceImpl implements PostService, PostQueryDslRepository {
 
   @Transactional
   @Override
+  // TODO: 메소드 분리 및 리팩토링 필요
   public Post insertPost(PostCreateRequestDto postCreateRequestDto, List<MultipartFile> files, List<MultipartFile> images) {
+    if (files == null && images == null) {
+      return POST_REPOSITORY.save(POST_MAPPER.saveDataToEntity(postCreateRequestDto, null, null));
+    }
+
+    if (files == null) {
+      String imageUrls = getImageAndFileLink(images);
+      return POST_REPOSITORY.save(POST_MAPPER.saveDataToEntity(postCreateRequestDto, null, imageUrls));
+    }
+
+    if (images == null) {
+      String fileUrls = getImageAndFileLink(files);
+      return POST_REPOSITORY.save(POST_MAPPER.saveDataToEntity(postCreateRequestDto, fileUrls, null));
+    }
+
     String fileUrls = getImageAndFileLink(files);
     String imageUrls = getImageAndFileLink(images);
     return POST_REPOSITORY.save(POST_MAPPER.saveDataToEntity(postCreateRequestDto, fileUrls, imageUrls));
