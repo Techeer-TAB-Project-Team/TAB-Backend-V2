@@ -1,3 +1,6 @@
+SET GLOBAL time_zone = '+9:00';
+SET time_zone = '+9:00';
+
 create table bookmark (
     id INT UNSIGNED not null auto_increment,
     member_id INT UNSIGNED not null,
