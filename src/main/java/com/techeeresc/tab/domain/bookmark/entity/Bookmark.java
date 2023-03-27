@@ -1,5 +1,6 @@
 package com.techeeresc.tab.domain.bookmark.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.techeeresc.tab.domain.member.entity.Member;
 import com.techeeresc.tab.domain.post.entity.Post;
 import com.techeeresc.tab.global.common.Timestamp;
@@ -22,10 +23,12 @@ public class Bookmark extends Timestamp {
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "member_id", nullable = false)
+  @JsonIgnore
   private Member member;
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "post_id", nullable = false)
+  @JsonIgnore
   private Post post;
 
   @Builder

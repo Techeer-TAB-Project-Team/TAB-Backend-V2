@@ -24,10 +24,10 @@ public class Post extends Timestamp {
   @Column(name = "post_id", columnDefinition = "INT UNSIGNED")
   private Long id;
 
-  @ManyToOne(fetch = FetchType.LAZY)
-//  @ManyToOne(fetch = FetchType.EAGER)
+//  @ManyToOne(fetch = FetchType.LAZY)
+  @ManyToOne(fetch = FetchType.EAGER)
   @JoinColumn(name = "member_id", nullable = false)
-//  @JsonIgnore
+  @JsonIgnore
   @JsonProperty("member_id")
   private Member member;
 
