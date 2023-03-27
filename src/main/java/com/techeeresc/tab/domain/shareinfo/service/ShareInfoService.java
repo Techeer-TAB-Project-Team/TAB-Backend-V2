@@ -1,21 +1,12 @@
 package com.techeeresc.tab.domain.shareinfo.service;
 
-import com.techeeresc.tab.domain.shareinfo.dto.request.ShareInfoCreateRequestDto;
-import com.techeeresc.tab.domain.shareinfo.dto.request.ShareInfoUpdateRequestDto;
-import com.techeeresc.tab.domain.shareinfo.entity.ShareInfo;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Pageable;
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Service;
 
-import java.util.List;
-
-public interface ShareInfoService {
-  public ShareInfo insertShareInfo(ShareInfoCreateRequestDto shareInfoCreateRequestDto);
-
-  public ShareInfo updateShareInfo(ShareInfoUpdateRequestDto shareInfoUpdateRequestDto);
-
-  public List<ShareInfo> deleteShareInfo(Long id);
-
-  public ShareInfo findShareInfoById(Long id);
-
-  public List<ShareInfo> findAllShareInfoList(Pageable pageable);
+@Service
+public class ShareInfoService {
+    @Scheduled(cron="0/10 * * * * *")
+    public void crawlingScheduler() {
+        System.out.println("10초에 한번씩 실행");
+    }
 }
