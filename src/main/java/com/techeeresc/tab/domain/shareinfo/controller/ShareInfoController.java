@@ -13,7 +13,7 @@ public class ShareInfoController {
     private final ShareInfoService SHARE_INFO_SERVICE;
 
     @GetMapping
-    public void crawlingEveryDay() {
-        SHARE_INFO_SERVICE.crawlingScheduler();
+    public void wantedCrawlingEveryDay() {
+        SHARE_INFO_SERVICE.wantedCrawlingScheduler();
     }
 }
