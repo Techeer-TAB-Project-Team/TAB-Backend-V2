@@ -17,7 +17,6 @@ import java.util.List;
 public class ShareInfoService {
     private final String WANTED = "https://www.wanted.co.kr/wdlist/518?country=kr&job_sort=company.response_rate_order&years=-1&locations=all";
 
-    @Scheduled(cron="0 0 12 1/1 * *")    // 하루 한 번 실행
     public void wantedCrawlingScheduler() {
         Connection connection = Jsoup.connect(WANTED);
         Document document = null;
