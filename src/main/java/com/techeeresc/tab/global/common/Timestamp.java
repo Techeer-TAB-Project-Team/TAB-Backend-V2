@@ -15,6 +15,7 @@ import java.time.ZoneId;
 @EntityListeners(AuditingEntityListener.class) // 해당 클래스에 Auditing 기능을 표현
 @Getter
 public class Timestamp {
+  @CreatedDate
   // Entity 생성 후 저장될 때의 시간이 자동 저장
   @Column(name = "created_at")
   private LocalDateTime createdAt;
