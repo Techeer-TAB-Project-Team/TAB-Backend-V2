@@ -8,6 +8,7 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.techeeresc.tab.domain.post.dto.mapper.PostMapper;
 import com.techeeresc.tab.domain.post.dto.request.PostCreateRequestDto;
 import com.techeeresc.tab.domain.post.dto.request.PostUpdateRequestDto;
+import com.techeeresc.tab.domain.post.dto.response.PostDataAndLengthDto;
 import com.techeeresc.tab.domain.post.entity.Post;
 import com.techeeresc.tab.domain.post.entity.QPost;
 import com.techeeresc.tab.domain.post.repository.PostQueryDslRepository;
@@ -39,15 +40,31 @@ public class PostServiceImpl implements PostService, PostQueryDslRepository {
 
   @Transactional
   @Override
-  public Post insertPost(PostCreateRequestDto postCreateRequestDto, List<MultipartFile> files) {
-    String imageUrls = getImageLink(files);
-    return POST_REPOSITORY.save(POST_MAPPER.saveDataToEntity(postCreateRequestDto, imageUrls));
+  // TODO: 메소드 분리 및 리팩토링 필요
+  public Post insertPost(PostCreateRequestDto postCreateRequestDto, List<MultipartFile> files, List<MultipartFile> images) {
+    if (files == null && images == null) {
+      return POST_REPOSITORY.save(POST_MAPPER.saveDataToEntity(postCreateRequestDto, null, null));
+    }
+
+    if (files == null) {
+      String imageUrls = getImageAndFileLink(images);
+      return POST_REPOSITORY.save(POST_MAPPER.saveDataToEntity(postCreateRequestDto, null, imageUrls));
+    }
+
+    if (images == null) {
+      String fileUrls = getImageAndFileLink(files);
+      return POST_REPOSITORY.save(POST_MAPPER.saveDataToEntity(postCreateRequestDto, fileUrls, null));
+    }
+
+    String fileUrls = getImageAndFileLink(files);
+    String imageUrls = getImageAndFileLink(images);
+    return POST_REPOSITORY.save(POST_MAPPER.saveDataToEntity(postCreateRequestDto, fileUrls, imageUrls));
   }
 
-  private String getImageLink(List<MultipartFile> files) {
-    StringBuffer imageUrls = new StringBuffer();
+  private String getImageAndFileLink(List<MultipartFile> filesOrImages) {
+    StringBuffer fileOrImageUrls = new StringBuffer();
 
-    files.forEach(
+    filesOrImages.forEach(
         file -> {
           String fileName = createFileName(file.getOriginalFilename());
           ObjectMetadata objectMetadata = new ObjectMetadata();
@@ -62,10 +79,10 @@ public class PostServiceImpl implements PostService, PostQueryDslRepository {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "파일 업로드에 실패했습니다.");
           }
 
-          imageUrls.append(urlPrefix + fileName + ", ");
+          fileOrImageUrls.append(urlPrefix + fileName + ", ");
         });
 
-    return imageUrls.toString();
+    return fileOrImageUrls.toString();
   }
 
   @Transactional
@@ -119,7 +136,7 @@ public class PostServiceImpl implements PostService, PostQueryDslRepository {
 
   @Transactional
   @Override
-  public List<Post> findByTitleContainsWordWithQueryDsl(String word, Pageable pageable) {
+  public PostDataAndLengthDto findByTitleContainsWordWithQueryDsl(String word, Pageable pageable) {
     QPost qPost = QPost.post;
 
     try {
@@ -133,7 +150,10 @@ public class PostServiceImpl implements PostService, PostQueryDslRepository {
 
       isPostExistedByList(postSearchResults);
 
-      return postSearchResults;
+      return PostDataAndLengthDto.builder()
+              .posts(postSearchResults)
+              .postLength(getSearchDataSize(word))
+              .build();
     } catch (NullPointerException exception) {
       throw new RequestNotFoundException(
           StatusMessage.NOT_FOUND.getStatusMessage(), StatusCodes.NOT_FOUND);
@@ -142,7 +162,7 @@ public class PostServiceImpl implements PostService, PostQueryDslRepository {
 
   @Transactional
   @Override
-  public List<Post> findAllPostListWithQueryDsl(Pageable pageable) {
+  public PostDataAndLengthDto findAllPostListWithQueryDsl(Pageable pageable) {
     QPost qPost = QPost.post;
 
     try {
@@ -154,7 +174,11 @@ public class PostServiceImpl implements PostService, PostQueryDslRepository {
               .fetch();
 
       isPostExistedByList(posts);
-      return posts;
+
+      return PostDataAndLengthDto.builder()
+              .posts(posts)
+              .postLength(getAllDataSize())
+              .build();
     } catch (NullPointerException exception) {
       throw new RequestNotFoundException(
           StatusMessage.NOT_FOUND.getStatusMessage(), StatusCodes.NOT_FOUND);
@@ -187,5 +211,21 @@ public class PostServiceImpl implements PostService, PostQueryDslRepository {
     } catch (StringIndexOutOfBoundsException e) {
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "잘못된 형식의 파일: " + fileName);
     }
+  }
+
+  private int getAllDataSize() {
+    return POST_REPOSITORY.findAll().size();
+  }
+
+  private int getSearchDataSize(String word) {
+    QPost qPost = QPost.post;
+
+    List<Post> postAllSearchResultsLength =
+        JPA_QUERY_FACTORY
+          .selectFrom(qPost)
+          .where(qPost.title.contains(word))
+          .fetch();
+
+    return postAllSearchResultsLength.size();
   }
 }

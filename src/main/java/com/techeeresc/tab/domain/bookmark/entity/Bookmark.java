@@ -5,7 +5,6 @@ import lombok.*;
 
 import javax.persistence.*;
 
-@ToString
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
@@ -23,10 +22,4 @@ public class Bookmark extends Timestamp {
 
   @Column(name = "post_id", nullable = false, columnDefinition = "INT UNSIGNED")
   private Long postId;
-
-  @Builder
-  public Bookmark(Long memberId, Long postId) {
-    this.memberId = memberId;
-    this.postId = postId;
-  }
 }

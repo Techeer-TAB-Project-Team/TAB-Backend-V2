@@ -2,6 +2,7 @@ package com.techeeresc.tab.domain.post.controller;
 
 import com.techeeresc.tab.domain.post.dto.mapper.PostMapper;
 import com.techeeresc.tab.domain.post.dto.request.PageRequest;
+import com.techeeresc.tab.domain.post.dto.response.PostDataAndLengthDto;
 import com.techeeresc.tab.domain.post.dto.response.PostResponseDto;
 import com.techeeresc.tab.domain.post.entity.Post;
 import com.techeeresc.tab.domain.post.service.PostService;
@@ -59,10 +60,10 @@ public class PostGetMethodController {
       description = "OK",
       content = @Content(schema = @Schema(implementation = PostResponseDto.class)))
   @GetMapping
-  public ResponseEntity<List<Post>> findAllPosts(PageRequest pageRequest) {
+  public ResponseEntity<PostDataAndLengthDto> findAllPosts(PageRequest pageRequest) {
     Pageable pageable = pageRequest.of();
-    List<Post> posts = POST_SERVICE.findAllPostListWithQueryDsl(pageable);
-    return new ResponseEntity<>(posts, HttpStatus.OK);
+    PostDataAndLengthDto post = POST_SERVICE.findAllPostListWithQueryDsl(pageable);
+    return new ResponseEntity<>(post, HttpStatus.OK);
   }
 
   @Operation(summary = "view one post", description = "Method: GET, success response code: 200")
@@ -79,11 +80,11 @@ public class PostGetMethodController {
       description = "Method: GET, success response code: 200, parameter: /{검색할 단어}?page=&size=")
   @ApiResponse(responseCode = "200", description = "OK")
   @GetMapping("/search/{word:.+}") /* PathVariable에 특수문자 허용 */
-  public ResponseEntity<List<Post>> findPostSearchResults(
+  public ResponseEntity<PostDataAndLengthDto> findPostSearchResults(
       @Parameter(description = "게시물 제목", in = ParameterIn.PATH) @PathVariable String word,
       PageRequest pageRequest) {
     Pageable pageable = pageRequest.of();
-    List<Post> postSearchResults = POST_SERVICE.findByTitleContainsWordWithQueryDsl(word, pageable);
-    return new ResponseEntity<>(postSearchResults, HttpStatus.OK);
+    PostDataAndLengthDto postSearchResult = POST_SERVICE.findByTitleContainsWordWithQueryDsl(word, pageable);
+    return new ResponseEntity<>(postSearchResult, HttpStatus.OK);
   }
 }

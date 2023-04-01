@@ -15,5 +15,5 @@ public interface BookmarkService {
 
   public Bookmark findBookmarkById(Long id);
 
-  public PageImpl<Bookmark> findAllBookmark(Pageable pageable);
+  public List<Bookmark> findAllBookmark(Pageable pageable);
 }

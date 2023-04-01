@@ -4,6 +4,8 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 import lombok.Getter;
 
+import java.time.LocalDateTime;
+
 @Getter
 @Builder
 public class CommentResponseDto {
@@ -30,4 +32,10 @@ public class CommentResponseDto {
       allowableValues = {"true", "false"},
       defaultValue = "false")
   private boolean isAnonymous;
+
+  @Schema(description = "created at", defaultValue = "2023-02-21")
+  private LocalDateTime createdAt;
+
+  @Schema(description = "updated at", defaultValue = "2023-02-25")
+  private LocalDateTime updatedAt;
 }

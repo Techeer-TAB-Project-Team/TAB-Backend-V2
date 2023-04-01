@@ -50,4 +50,7 @@ public class PostResponseDto {
 
   @Schema(description = "created at", defaultValue = "2023-02-21")
   private LocalDateTime createdAt;
+
+  @Schema(description = "updated at", defaultValue = "2023-02-25")
+  private LocalDateTime updatedAt;
 }

@@ -73,7 +73,7 @@ public class ShareInfoServiceImpl implements ShareInfoService, ShareInfoQueryDsl
   }
 
   @Transactional
-  public PageImpl<ShareInfo> findAllShareInfoList(Pageable pageable) {
+  public List<ShareInfo> findAllShareInfoList(Pageable pageable) {
     QShareInfo qShareInfo = QShareInfo.shareInfo;
 
     try {
@@ -85,7 +85,7 @@ public class ShareInfoServiceImpl implements ShareInfoService, ShareInfoQueryDsl
               .fetch();
 
       isShareInfoExistedByList(shareInfos);
-      return new PageImpl<>(shareInfos, pageable, shareInfos.size());
+      return shareInfos;
     } catch (NullPointerException exception) {
       throw new RequestNotFoundException(
           StatusMessage.NOT_FOUND.getStatusMessage(), StatusCodes.NOT_FOUND);

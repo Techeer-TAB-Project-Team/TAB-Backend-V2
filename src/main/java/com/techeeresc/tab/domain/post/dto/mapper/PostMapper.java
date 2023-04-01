@@ -7,13 +7,13 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class PostMapper {
-  public Post saveDataToEntity(PostCreateRequestDto postCreateRequestDto, String imageUrls) {
+  public Post saveDataToEntity(PostCreateRequestDto postCreateRequestDto, String fileUrls, String imageUrls) {
     return Post.builder()
         .memberId(postCreateRequestDto.getMemberId())
         .category(postCreateRequestDto.getCategory())
         .title(postCreateRequestDto.getTitle())
         .content(postCreateRequestDto.getContent())
-        .file(imageUrls)
+        .file(fileUrls)
         .image(imageUrls)
         .hashtags(postCreateRequestDto.getHashtags())
         .isAnonymous(postCreateRequestDto.isAnonymous())
@@ -33,6 +33,7 @@ public class PostMapper {
         .likeNumbers(post.getLikeNumbers())
         .views(post.getViews())
         .createdAt(post.getCreatedAt())
+        .updatedAt(post.getUpdatedAt())
         .isAnonymous(post.isAnonymous()) // boolean 타입의 변수인 경우 getXXX가 아니라 isXXX 이름으로 getter를 생성한다!
         .build();
   }

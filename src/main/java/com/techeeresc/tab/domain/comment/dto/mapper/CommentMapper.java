@@ -28,6 +28,8 @@ public class CommentMapper {
         .content(comment.getContent())
         .layer(comment.getLayer())
         .isAnonymous(comment.isAnonymous())
+        .createdAt(comment.getCreatedAt())
+        .updatedAt(comment.getUpdatedAt())
         .build();
   }
 }

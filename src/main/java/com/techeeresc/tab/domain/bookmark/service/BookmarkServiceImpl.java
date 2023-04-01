@@ -61,7 +61,7 @@ public class BookmarkServiceImpl implements BookmarkService, BookmarkQueryDslRep
   }
 
   @Transactional
-  public PageImpl<Bookmark> findAllBookmark(Pageable pageable) {
+  public List<Bookmark> findAllBookmark(Pageable pageable) {
     QBookmark qBookmark = QBookmark.bookmark;
 
     try {
@@ -73,7 +73,7 @@ public class BookmarkServiceImpl implements BookmarkService, BookmarkQueryDslRep
               .fetch();
 
       isBookmarkExistedByList(bookmarks);
-      return new PageImpl<>(bookmarks, pageable, bookmarks.size());
+      return bookmarks;
     } catch (NullPointerException exception) {
       throw new RequestNotFoundException(
           StatusMessage.NOT_FOUND.getStatusMessage(), StatusCodes.NOT_FOUND);

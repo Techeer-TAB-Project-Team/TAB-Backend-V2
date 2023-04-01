@@ -22,6 +22,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 @ApiResponses({
   @ApiResponse(
       responseCode = "200",
@@ -59,10 +61,10 @@ public class ShareInfoGetMethodController {
             content = @Content(schema = @Schema(implementation = ShareInfoResponseDto.class))),
       })
   @GetMapping
-  public ResponseEntity<PageImpl<ShareInfo>> findAllShareInfo(
+  public ResponseEntity<List<ShareInfo>> findAllShareInfo(
       ShareInfoPagingDto shareInfoPagingDto) {
     Pageable pageable = shareInfoPagingDto.of();
-    PageImpl<ShareInfo> shareInfos = SHARE_INFO_SERVICE.findAllShareInfoList(pageable);
+    List<ShareInfo> shareInfos = SHARE_INFO_SERVICE.findAllShareInfoList(pageable);
     return new ResponseEntity<>(shareInfos, HttpStatus.OK);
   }
 
